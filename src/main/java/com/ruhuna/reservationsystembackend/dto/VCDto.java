@@ -13,6 +13,7 @@ import lombok.experimental.SuperBuilder;
 public class VCDto {
     private Long id;
     private String username;
+    private String password;
     private String email;
     private UserRole userRole;
 }
