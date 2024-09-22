@@ -22,12 +22,13 @@ public class Reservation {
     private Long reservation_id;
     private String organizationName;
     private String applicantName;
-    private String NIC;
+    private String nic;
     private String email;
     private String mobile;
     private String landLine;
     private String address;
     private String eventType;
+    private String otherEventType;
     private String concertType;
     private String musicBand;
     private String singers;
