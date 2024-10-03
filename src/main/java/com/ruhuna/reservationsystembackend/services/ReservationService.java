@@ -9,4 +9,5 @@ public interface ReservationService {
     List<UnavailableDatesDto> getUnavailableDates();
 
     void submitForm(ReservationDto reservationDto);
+    void updateStatus(Long reservationId);
 }

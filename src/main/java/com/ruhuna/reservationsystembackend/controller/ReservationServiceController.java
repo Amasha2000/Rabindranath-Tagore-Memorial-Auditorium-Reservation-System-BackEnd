@@ -21,10 +21,14 @@ public class ReservationServiceController {
 
     private final ReservationService reservationService;
 
+
+    //get reserved date details
     @GetMapping("/unavailable-dates")
     public List<UnavailableDatesDto> getUnavailableDates() {
         return reservationService.getUnavailableDates();
     }
+
+    //form submission
     @PostMapping(value = "/submit-form",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> submitForm(@Valid @RequestBody ReservationDto reservationDto){
         try{
@@ -34,4 +38,15 @@ public class ReservationServiceController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
         }
     }
+
+    //update approval status
+    @PutMapping("/approve/{id}")
+    public ResponseEntity<?> updateReservationStatus(@PathVariable Long id){
+        try {
+            reservationService.updateStatus(id);
+            return ResponseEntity.ok(new CommonResponse<>(true, "Approval Status has changed successfully"));
+        }catch (RuntimeException exception){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+        }
+        }
 }

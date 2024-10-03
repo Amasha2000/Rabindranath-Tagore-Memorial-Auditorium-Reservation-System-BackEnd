@@ -5,6 +5,7 @@ import com.ruhuna.reservationsystembackend.dto.UnavailableDatesDto;
 import com.ruhuna.reservationsystembackend.entity.Reservation;
 import com.ruhuna.reservationsystembackend.enums.ApprovalStatus;
 import com.ruhuna.reservationsystembackend.repository.ReservationRepository;
+import com.ruhuna.reservationsystembackend.services.EmailService;
 import com.ruhuna.reservationsystembackend.services.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -20,6 +21,8 @@ public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ModelMapper modelMapper;
+
+    private final EmailService emailService;
 
     //get all reservations
     @Override
@@ -132,5 +135,16 @@ public class ReservationServiceImpl implements ReservationService {
         } catch (Exception e) {
             throw e;
         }
+    }
+
+    @Override
+    public void updateStatus(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(()-> new IllegalArgumentException("Reservation not found"));
+
+        reservation.setApprovalStatus(ApprovalStatus.APPROVED);
+        reservationRepository.save(reservation);
+
+        emailService.sendApprovalStatusEmail(reservation.getEmail(), reservation.getApplicantName(), reservation.getApprovalStatus());
+
     }
 }
