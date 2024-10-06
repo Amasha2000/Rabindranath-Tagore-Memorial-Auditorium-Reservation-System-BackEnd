@@ -1,6 +1,7 @@
-package com.ruhuna.reservationsystembackend.services;
+package com.ruhuna.reservationsystembackend.services.impl;
 
 import com.ruhuna.reservationsystembackend.enums.ApprovalStatus;
+import com.ruhuna.reservationsystembackend.services.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class EmailServiceImpl implements EmailService{
+public class EmailServiceImpl implements EmailService {
 
     @Autowired
     private JavaMailSender mailSender;

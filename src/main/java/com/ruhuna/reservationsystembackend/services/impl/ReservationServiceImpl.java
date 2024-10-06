@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -35,6 +36,16 @@ public class ReservationServiceImpl implements ReservationService {
                             reservation.getOrganizationName(),
                             reservation.getEventType()))
                     .collect(Collectors.toList());
+        }catch (Exception e){
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Reservation> getAllReservations() {
+        try {
+            List<Reservation> allReservations = reservationRepository.findAll();
+            return allReservations;
         }catch (Exception e){
             throw e;
         }
@@ -146,5 +157,10 @@ public class ReservationServiceImpl implements ReservationService {
 
         emailService.sendApprovalStatusEmail(reservation.getEmail(), reservation.getApplicantName(), reservation.getApprovalStatus());
 
+    }
+
+    @Override
+    public List<Reservation> getReservationsByUsername(String username) {
+        return reservationRepository.findByGuestUsername(username);
     }
 }
