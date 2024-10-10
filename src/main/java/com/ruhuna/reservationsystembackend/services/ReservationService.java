@@ -5,7 +5,6 @@ import com.ruhuna.reservationsystembackend.dto.UnavailableDatesDto;
 import com.ruhuna.reservationsystembackend.entity.Reservation;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ReservationService {
     List<UnavailableDatesDto> getUnavailableDates();
@@ -13,4 +12,5 @@ public interface ReservationService {
     void submitForm(ReservationDto reservationDto);
     void updateStatus(Long reservationId);
     List<Reservation> getReservationsByUsername(String username);
+    void cancelReservation(Long reservationId);
 }

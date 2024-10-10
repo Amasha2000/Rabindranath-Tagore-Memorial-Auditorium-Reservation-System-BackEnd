@@ -47,4 +47,5 @@ public class ReservationDto {
     private String stageDecoration;
     private String ticketSalesAtPremises;
     private String security;
+    private String username;
 }

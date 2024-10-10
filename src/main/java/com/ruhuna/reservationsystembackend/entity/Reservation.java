@@ -1,6 +1,8 @@
 package com.ruhuna.reservationsystembackend.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ruhuna.reservationsystembackend.enums.ApprovalStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Entity
 public class Reservation {
     @Id
@@ -72,6 +75,8 @@ public class Reservation {
     private BigDecimal totalFee;
     @Column(precision = 10, scale = 2)
     private BigDecimal cancellationFee;
+    @JsonProperty
+    @JsonInclude
     private boolean isCancelled;
     @Column(precision = 10, scale = 2)
     private BigDecimal hallReservationFee;

@@ -3,17 +3,21 @@ package com.ruhuna.reservationsystembackend.controller;
 import com.ruhuna.reservationsystembackend.dto.ReservationDto;
 import com.ruhuna.reservationsystembackend.dto.UnavailableDatesDto;
 import com.ruhuna.reservationsystembackend.dto.common.CommonResponse;
+import com.ruhuna.reservationsystembackend.entity.GuestUser;
 import com.ruhuna.reservationsystembackend.entity.Reservation;
+import com.ruhuna.reservationsystembackend.services.GuestUserService;
 import com.ruhuna.reservationsystembackend.services.ReservationService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -22,7 +26,8 @@ import java.util.Optional;
 public class ReservationController {
 
     private final ReservationService reservationService;
-
+    private final GuestUserService guestUserService;
+    private final ModelMapper modelMapper;
 
     //get reserved date details
     @GetMapping("/unavailable-dates")
@@ -41,10 +46,8 @@ public class ReservationController {
     public ResponseEntity<List<Reservation>> getReservationByUserName(@PathVariable String username) {
         // Fetch reservations by username
         List<Reservation> reservations = reservationService.getReservationsByUsername(username);
-
         return ResponseEntity.ok(reservations);
     }
-
 
     //form submission
     @PostMapping(value = "/submit-form",produces = MediaType.APPLICATION_JSON_VALUE)
@@ -66,5 +69,13 @@ public class ReservationController {
         }catch (RuntimeException exception){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
         }
-        }
+    }
+
+    @PutMapping("/cancel/{reservationId}")
+    public ResponseEntity<Void> cancelReservation(@PathVariable Long reservationId) {
+        reservationService.cancelReservation(reservationId);
+        return ResponseEntity.ok().build();
+    }
+
+
 }
