@@ -8,6 +8,7 @@ import com.ruhuna.reservationsystembackend.enums.ApprovalStatus;
 import com.ruhuna.reservationsystembackend.repository.GuestUserRepository;
 import com.ruhuna.reservationsystembackend.repository.ReservationRepository;
 import com.ruhuna.reservationsystembackend.services.EmailService;
+import com.ruhuna.reservationsystembackend.services.NotificationService;
 import com.ruhuna.reservationsystembackend.services.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -29,6 +30,8 @@ public class ReservationServiceImpl implements ReservationService {
     private final ModelMapper modelMapper;
 
     private final EmailService emailService;
+
+    private final NotificationService notificationService;
 
     //get all reservations
     @Override
@@ -164,7 +167,14 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setApprovalStatus(ApprovalStatus.APPROVED);
         reservationRepository.save(reservation);
 
+        //send email
         emailService.sendApprovalStatusEmail(reservation.getEmail(), reservation.getApplicantName(), reservation.getApprovalStatus());
+
+        //send notifications
+        String redirectUrl = "/payment/";
+        notificationService.createNotification("Your reservation has approved and make the advance fee to confirm the reservation",
+                reservationId,
+                redirectUrl);
 
     }
 

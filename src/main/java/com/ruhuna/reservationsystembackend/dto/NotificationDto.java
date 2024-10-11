@@ -17,4 +17,6 @@ public class NotificationDto {
     private String message;
     private UserRole userRole;
     private LocalDate date;
+    private boolean hasRead;
+    private String redirectUrl;
 }

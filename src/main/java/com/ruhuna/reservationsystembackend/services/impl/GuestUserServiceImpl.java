@@ -59,6 +59,15 @@ public class GuestUserServiceImpl implements GuestUserService, UserDetailsServic
     }
 
     @Override
+    public GuestUser findByUsername(String username) {
+        try {
+            return guestUserRepository.findByUsername(username);
+        }catch (Exception e){
+            throw e;
+        }
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         GuestUser guestUser = guestUserRepository.findByUsername(username);
         if (guestUser == null) {

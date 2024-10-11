@@ -1,6 +1,7 @@
 package com.ruhuna.reservationsystembackend.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ruhuna.reservationsystembackend.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Entity
 public class Notification {
     @Id
@@ -24,14 +26,21 @@ public class Notification {
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(nullable = false)
     private LocalDate date;
+    @Column(nullable = false, columnDefinition = "tinyint(1)")
+    private boolean hasRead;
+    @Column
+    private String redirectUrl;
 
     @ManyToOne
     @JoinColumn(name = "admin_id")
+    @JsonIgnore
     private Admin admin;
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private GuestUser user;
     @ManyToOne
     @JoinColumn(name = "vc_id")
+    @JsonIgnore
     private VC vc;
 }

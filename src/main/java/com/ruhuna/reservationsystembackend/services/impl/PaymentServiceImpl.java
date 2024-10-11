@@ -7,6 +7,7 @@ import com.ruhuna.reservationsystembackend.enums.PaymentType;
 import com.ruhuna.reservationsystembackend.repository.PaymentRepository;
 import com.ruhuna.reservationsystembackend.repository.ReservationRepository;
 import com.ruhuna.reservationsystembackend.services.EmailService;
+import com.ruhuna.reservationsystembackend.services.NotificationService;
 import com.ruhuna.reservationsystembackend.services.PaymentService;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
@@ -32,6 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final ReservationRepository reservationRepository;
 
     private final EmailService emailService;
+    private final NotificationService notificationService;
 
 
     public PaymentDto createPayment(Long reservationId, PaymentDto paymentDto, String stripeToken) throws StripeException {
@@ -61,7 +63,21 @@ public class PaymentServiceImpl implements PaymentService {
 
         paymentRepository.save(payment);
 
+        //send email
         emailService.sendPaymentConfirmationEmail(reservation.getUser().getEmail(), payment.getPaymentType() , paymentDto.getAmount());
+
+        //send notifications
+        if(paymentDto.getPaymentType() == PaymentType.ADVANCE_FEE){
+            String redirectUrl = "/payment/";
+            notificationService.createNotification("Your payment of Rs."+paymentDto.getAmount()+" for advance fee was successful and make the total payment for reserve the auditorium.",
+                    reservationId,
+                    redirectUrl);
+        }else {
+            String redirectUrl = "/payment/";
+            notificationService.createNotification("Your payment of Rs." + paymentDto.getAmount() + " for total fee was successful and reservation has completed.",
+                    reservationId,
+                    redirectUrl);
+        }
 
         // Return payment data to the frontend
         return PaymentDto.builder()
