@@ -7,4 +7,5 @@ public interface GuestUserService {
      void userSignUp(GuestUserDto guestUserDto);
 
      GuestUser findByUsername(String username);
+
 }

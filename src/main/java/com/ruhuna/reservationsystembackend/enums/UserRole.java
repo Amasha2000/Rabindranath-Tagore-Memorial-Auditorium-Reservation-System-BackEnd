@@ -1,5 +1,5 @@
 package com.ruhuna.reservationsystembackend.enums;
 
 public enum UserRole {
-    ADMIN, VC, GUEST_USER
+    ROLE_ADMIN, ROLE_VC, ROLE_GUEST_USER
 }
