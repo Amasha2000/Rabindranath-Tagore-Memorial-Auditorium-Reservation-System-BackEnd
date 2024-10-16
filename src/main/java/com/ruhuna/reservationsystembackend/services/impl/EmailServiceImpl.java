@@ -27,6 +27,8 @@ public class EmailServiceImpl implements EmailService {
         message.setSubject("Auditorium Reservation Approval Status Updated");
         message.setText("Dear " + applicantName + ",\n\n" +
                 "Your reservation's approval status has been updated to: " + status + ".\n" +
+                "Please log in to view more details: " +
+                "http://localhost:3000/user-login" + "\n\n" +  // Replace with actual login page URL
                 "Thank you for using our service.\n\n" +
                 "Best regards,\nUniversity of Ruhuna Auditorium Management");
 
@@ -38,7 +40,12 @@ public class EmailServiceImpl implements EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("Payment Confirmation for Reservation " + paymentType);
-        message.setText("Dear customer, your payment of Rs." + amount + " for " + paymentType + " has been successfully processed.");
+        message.setText("Dear applicant,\n\n" +
+                "Your payment of Rs." + amount + " for " + paymentType + " has been successfully processed.\n" +
+                "Please log in to view more details: " +
+                "http://localhost:3000/user-login" + "\n\n" +  // Replace with actual login page URL
+                "Thank you for using our service.\n\n" +
+                "Best regards,\nUniversity of Ruhuna Auditorium Management");
 
         mailSender.send(message);
     }
