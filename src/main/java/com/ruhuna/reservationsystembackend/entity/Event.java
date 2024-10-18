@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long event_id;
+    private Long eventId;
     private String title;
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(nullable = false)
@@ -23,6 +23,6 @@ public class Event {
     private String imageURL;
 
     @ManyToOne
-    @JoinColumn(name = "admin_id")
+    @JoinColumn(name = "adminId")
     private Admin admin;
 }

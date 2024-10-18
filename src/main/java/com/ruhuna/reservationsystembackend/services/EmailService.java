@@ -9,4 +9,6 @@ public interface EmailService {
      void sendApprovalStatusEmail(String toEmail, String applicantName, ApprovalStatus status);
 
      void sendPaymentConfirmationEmail(String to, PaymentType paymentType, BigDecimal amount);
+     void receiveToVCEmail(String toEmail);
+     void newApplicationFormEmail(String toEmail);
 }

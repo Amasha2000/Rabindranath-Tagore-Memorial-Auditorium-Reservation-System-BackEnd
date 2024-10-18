@@ -20,7 +20,7 @@ public class NotificationController {
     @GetMapping("/{userName}")
     public List<Notification> getNotifications(@PathVariable String userName) {
         GuestUser user = guestUserService.findByUsername(userName);
-            return notificationService.getAllNotifications(user.getUser_id());
+            return notificationService.getAllNotifications(user.getUserId());
     }
 
 

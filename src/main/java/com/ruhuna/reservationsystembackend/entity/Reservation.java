@@ -1,6 +1,7 @@
 package com.ruhuna.reservationsystembackend.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ruhuna.reservationsystembackend.enums.ApprovalStatus;
@@ -22,7 +23,7 @@ import java.util.List;
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reservation_id;
+    private Long reservationId;
     private String organizationName;
     private String applicantName;
     private String nic;
@@ -77,7 +78,11 @@ public class Reservation {
     private BigDecimal cancellationFee;
     @JsonProperty
     @JsonInclude
-    private boolean isCancelled;
+    private boolean hasCancelled;
+    @Column(nullable = false, columnDefinition = "tinyint(1)")
+    private boolean hasCompleted;
+    @Column(nullable = false, columnDefinition = "tinyint(1)")
+    private boolean hasSendToVC;
     @Column(precision = 10, scale = 2)
     private BigDecimal hallReservationFee;
     @Column(precision = 10, scale = 2)
@@ -88,13 +93,16 @@ public class Reservation {
     private BigDecimal additionalHourFee;
 
     @ManyToOne
-    @JoinColumn(name = "admin_id")
+    @JoinColumn(name = "adminId")
+    @JsonIgnore
     private Admin admin;
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userId")
+    @JsonIgnore
     private GuestUser user;
     @ManyToOne
-    @JoinColumn(name = "vc_id")
+    @JoinColumn(name = "vcId")
+    @JsonIgnore
     private VC vc;
     @OneToMany(mappedBy = "reservation")
     private List<Payment> paymentList;

@@ -81,7 +81,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         // Return payment data to the frontend
         return PaymentDto.builder()
-                .id(payment.getPayment_id())
+                .id(payment.getPaymentId())
                 .paymentDate(payment.getPaymentDate())
                 .paymentTime(payment.getPaymentTime())
                 .paymentType(payment.getPaymentType())

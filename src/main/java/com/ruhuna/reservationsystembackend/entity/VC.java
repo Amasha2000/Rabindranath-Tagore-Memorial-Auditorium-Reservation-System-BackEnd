@@ -15,7 +15,7 @@ import java.util.List;
 public class VC {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long vc_id;
+    private Long vcId;
     @Column(nullable = false)
     private String username;
     @Column(nullable = false)

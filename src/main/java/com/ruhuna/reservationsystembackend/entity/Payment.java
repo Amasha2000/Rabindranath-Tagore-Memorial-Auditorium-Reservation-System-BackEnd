@@ -18,7 +18,7 @@ import java.time.LocalTime;
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long payment_id;
+    private Long paymentId;
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(nullable = false)
     private LocalDate paymentDate;
@@ -31,6 +31,6 @@ public class Payment {
     private BigDecimal amount;
 
     @ManyToOne
-    @JoinColumn(name = "reservation_id")
+    @JoinColumn(name = "reservationId")
     private Reservation reservation;
 }

@@ -3,8 +3,8 @@ package com.ruhuna.reservationsystembackend.controller;
 import com.ruhuna.reservationsystembackend.dto.ReservationDto;
 import com.ruhuna.reservationsystembackend.dto.UnavailableDatesDto;
 import com.ruhuna.reservationsystembackend.dto.common.CommonResponse;
-import com.ruhuna.reservationsystembackend.entity.GuestUser;
 import com.ruhuna.reservationsystembackend.entity.Reservation;
+import com.ruhuna.reservationsystembackend.enums.ApprovalStatus;
 import com.ruhuna.reservationsystembackend.services.GuestUserService;
 import com.ruhuna.reservationsystembackend.services.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +12,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,8 +24,6 @@ import java.util.List;
 public class ReservationController {
 
     private final ReservationService reservationService;
-    private final GuestUserService guestUserService;
-    private final ModelMapper modelMapper;
 
     //get reserved date details
     @GetMapping("/unavailable-dates")
@@ -49,12 +45,58 @@ public class ReservationController {
         return ResponseEntity.ok(reservations);
     }
 
+    //get all pending reservations
+    @GetMapping("/get/pending")
+    public ResponseEntity<List<Reservation>> getPendingReservations() {
+        List<Reservation> reservations = reservationService.findAllByStatus(ApprovalStatus.PENDING);
+        return ResponseEntity.ok(reservations);
+    }
+
+    //get all pending reservations for admin
+    @GetMapping("/get/admin-pending")
+    public ResponseEntity<List<Reservation>> getPendingReservationsForAdmin() {
+        List<Reservation> reservations = reservationService.findAllByStatusToAdmin(ApprovalStatus.PENDING);
+        return ResponseEntity.ok(reservations);
+    }
+
+    //get all pending reservations for vc
+    @GetMapping("/get/vc-pending")
+    public ResponseEntity<List<Reservation>> getPendingReservationsForVC() {
+        List<Reservation> reservations = reservationService.findAllByStatusToVC(ApprovalStatus.PENDING);
+        return ResponseEntity.ok(reservations);
+    }
+
+    //get all reservations for sending vc
+    @GetMapping("/get/send")
+    public ResponseEntity<List<Reservation>> getSendingVCReservations() {
+        List<Reservation> reservations = reservationService.hasSendToVC();
+        return ResponseEntity.ok(reservations);
+    }
+
+    //get all reservations for sending vc
+    @GetMapping("/get/{id}")
+    public ResponseEntity<Reservation> getReservationById(@PathVariable Long id) {
+        Reservation reservation = reservationService.findReservationById(id);
+        return ResponseEntity.ok(reservation);
+    }
+
+
     //form submission
     @PostMapping(value = "/submit-form",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> submitForm(@Valid @RequestBody ReservationDto reservationDto){
         try{
             reservationService.submitForm(reservationDto);
             return ResponseEntity.ok(new CommonResponse<>(true,"Form submitted successfully"));
+        }catch (RuntimeException exception){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+        }
+    }
+
+    @PutMapping(value = "/send-vc/{id}")
+    public ResponseEntity<?> sendToVC(@PathVariable Long id){
+        try{
+            reservationService.sendToVc(id);
+            return ResponseEntity.ok(new CommonResponse<>(true,"Successfully send to VC"));
         }catch (RuntimeException exception){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
         }

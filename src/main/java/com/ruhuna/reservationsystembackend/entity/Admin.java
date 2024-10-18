@@ -15,7 +15,7 @@ import java.util.List;
 public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long admin_id;
+    private Long adminId;
     @Column(nullable = false)
     private String username;
     @Column(nullable = false)

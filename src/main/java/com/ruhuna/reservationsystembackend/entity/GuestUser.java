@@ -15,7 +15,7 @@ import java.util.List;
 public class GuestUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+    private Long userId;
     @Column(nullable = false)
     private String username;
     @Column(nullable = false)

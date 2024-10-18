@@ -18,7 +18,7 @@ import java.time.LocalDate;
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long notification_id;
+    private Long notificationId;
     @Column(nullable = false)
     private String message;
     @Enumerated(value = EnumType.STRING)
@@ -32,15 +32,15 @@ public class Notification {
     private String redirectUrl;
 
     @ManyToOne
-    @JoinColumn(name = "admin_id")
+    @JoinColumn(name = "adminId")
     @JsonIgnore
     private Admin admin;
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userId")
     @JsonIgnore
     private GuestUser user;
     @ManyToOne
-    @JoinColumn(name = "vc_id")
+    @JoinColumn(name = "vcId")
     @JsonIgnore
     private VC vc;
 }

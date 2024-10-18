@@ -14,4 +14,5 @@ public interface GuestUserRepository extends JpaRepository<GuestUser,Long> {
     boolean existsByUsername(String username);
 
     GuestUser findByUsername(String username);
+    long count();
 }

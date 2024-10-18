@@ -1,6 +1,7 @@
 package com.ruhuna.reservationsystembackend.controller;
 
 import com.ruhuna.reservationsystembackend.dto.AdminDto;
+import com.ruhuna.reservationsystembackend.dto.AdminStatDto;
 import com.ruhuna.reservationsystembackend.dto.VCDto;
 import com.ruhuna.reservationsystembackend.dto.common.CommonResponse;
 import com.ruhuna.reservationsystembackend.services.AdminService;
@@ -9,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -30,6 +28,16 @@ public class AdminController {
             return ResponseEntity.ok(new CommonResponse<>(true, "Admin sign up successfully."));
         }catch (RuntimeException exception){
             System.out.println(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+        }
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<?> getAdminStats() {
+        try {
+            AdminStatDto adminStats = adminService.getAdminStats();
+            return ResponseEntity.ok(new CommonResponse<>(true, adminStats));
+        } catch (RuntimeException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
         }
     }

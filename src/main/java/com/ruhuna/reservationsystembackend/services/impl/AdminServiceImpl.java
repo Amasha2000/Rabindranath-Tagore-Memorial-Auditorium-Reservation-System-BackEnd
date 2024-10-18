@@ -1,16 +1,20 @@
 package com.ruhuna.reservationsystembackend.services.impl;
 
 import com.ruhuna.reservationsystembackend.dto.AdminDto;
+import com.ruhuna.reservationsystembackend.dto.AdminStatDto;
 import com.ruhuna.reservationsystembackend.entity.Admin;
 import com.ruhuna.reservationsystembackend.enums.UserRole;
 import com.ruhuna.reservationsystembackend.repository.AdminRepository;
 import com.ruhuna.reservationsystembackend.repository.GuestUserRepository;
+import com.ruhuna.reservationsystembackend.repository.ReservationRepository;
 import com.ruhuna.reservationsystembackend.repository.VCRepository;
 import com.ruhuna.reservationsystembackend.services.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 
 @Service
@@ -22,6 +26,7 @@ public class AdminServiceImpl implements AdminService {
     private final AdminRepository adminRepository;
 
     private final GuestUserRepository guestUserRepository;
+    private final ReservationRepository reservationRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -50,5 +55,14 @@ public class AdminServiceImpl implements AdminService {
         }catch (Exception e){
             throw e;
         }
+    }
+
+    @Override
+    public AdminStatDto getAdminStats() {
+        long totalUsers = guestUserRepository.count();
+        BigDecimal totalRevenue = reservationRepository.sumTotalRevenue();
+        long totalCompletedReservations = reservationRepository.countByHasCompletedTrue();
+
+        return new AdminStatDto(totalUsers, totalRevenue, totalCompletedReservations);
     }
 }

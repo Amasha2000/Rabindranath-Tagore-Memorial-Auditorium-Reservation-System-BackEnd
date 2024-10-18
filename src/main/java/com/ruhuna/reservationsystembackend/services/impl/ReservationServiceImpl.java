@@ -2,11 +2,16 @@ package com.ruhuna.reservationsystembackend.services.impl;
 
 import com.ruhuna.reservationsystembackend.dto.ReservationDto;
 import com.ruhuna.reservationsystembackend.dto.UnavailableDatesDto;
+import com.ruhuna.reservationsystembackend.entity.Admin;
 import com.ruhuna.reservationsystembackend.entity.GuestUser;
 import com.ruhuna.reservationsystembackend.entity.Reservation;
+import com.ruhuna.reservationsystembackend.entity.VC;
 import com.ruhuna.reservationsystembackend.enums.ApprovalStatus;
+import com.ruhuna.reservationsystembackend.enums.UserRole;
+import com.ruhuna.reservationsystembackend.repository.AdminRepository;
 import com.ruhuna.reservationsystembackend.repository.GuestUserRepository;
 import com.ruhuna.reservationsystembackend.repository.ReservationRepository;
+import com.ruhuna.reservationsystembackend.repository.VCRepository;
 import com.ruhuna.reservationsystembackend.services.EmailService;
 import com.ruhuna.reservationsystembackend.services.NotificationService;
 import com.ruhuna.reservationsystembackend.services.ReservationService;
@@ -27,8 +32,9 @@ public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final GuestUserRepository guestUserRepository;
+    private final VCRepository vcRepository;
+    private final AdminRepository adminRepository;
     private final ModelMapper modelMapper;
-
     private final EmailService emailService;
 
     private final NotificationService notificationService;
@@ -155,6 +161,16 @@ public class ReservationServiceImpl implements ReservationService {
 
             reservationRepository.save(reservation);
 
+            Admin admin = adminRepository.findByUserRole(UserRole.ROLE_ADMIN);
+            //send email
+            emailService.newApplicationFormEmail(admin.getEmail());
+
+            //send notifications
+            String redirectUrl = "/admin-dashboard/";
+            notificationService.createAdminNotification("New Application Form has submitted to reserve the auditorium.Click here to view",
+                    admin.getAdminId(),
+                    redirectUrl);
+
         } catch (Exception e) {
             throw e;
         }
@@ -189,7 +205,7 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("Reservation not found"));
 
-            if (reservation.isCancelled()) {
+            if (reservation.isHasCancelled()) {
                 throw new IllegalStateException("Reservation already cancelled");
             }
 
@@ -198,13 +214,72 @@ public class ReservationServiceImpl implements ReservationService {
             long daysBetween = ChronoUnit.DAYS.between(today, programDate);
             BigDecimal cancellationFee = calculateCancellationFee(reservation.getAdvanceFee(), daysBetween);
 
-            reservation.setCancelled(true);
+            reservation.setHasCancelled(true);
             reservation.setCancellationFee(cancellationFee);
 
             reservationRepository.save(reservation);
         }
 
-        private BigDecimal calculateCancellationFee(BigDecimal advanceFee, long daysBetween) {
+    @Override
+    public List<Reservation> findAllByStatus(ApprovalStatus status) {
+        if(reservationRepository.findByApprovalStatus(status) != null) {
+            return reservationRepository.findByApprovalStatus(status);
+        }else{
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public List<Reservation> hasSendToVC() {
+        return reservationRepository.findByHasSendToVCTrue();
+    }
+
+    @Override
+    public Reservation findReservationById(Long id) {
+        return reservationRepository.findByReservationId(id);
+    }
+
+    @Override
+    public void sendToVc(Long id) {
+        Reservation reservation = reservationRepository.findByReservationId(id);
+        if(reservation == null){
+            throw new RuntimeException();
+        }else{
+            reservation.setHasSendToVC(true);
+            reservationRepository.save(reservation);
+
+            VC vc = vcRepository.findByUserRole(UserRole.ROLE_VC);
+            //send email
+            emailService.receiveToVCEmail(vc.getEmail());
+
+            //send notifications
+            String redirectUrl = "/vc-dashboard/";
+            notificationService.createVCNotification("New Application Form is waiting for the approval.Click here to view",
+                    vc.getVcId(),
+                    redirectUrl);
+
+        }
+    }
+
+    @Override
+    public List<Reservation> findAllByStatusToAdmin(ApprovalStatus status) {
+        if(reservationRepository.findByApprovalStatusAndHasSendToVCIsFalse(status) != null) {
+            return reservationRepository.findByApprovalStatusAndHasSendToVCIsFalse(status);
+        }else{
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public List<Reservation> findAllByStatusToVC(ApprovalStatus status) {
+        if(reservationRepository.findByApprovalStatusAndHasSendToVCIsTrue(status) != null) {
+            return reservationRepository.findByApprovalStatusAndHasSendToVCIsTrue(status);
+        }else{
+            throw new RuntimeException();
+        }
+    }
+
+    private BigDecimal calculateCancellationFee(BigDecimal advanceFee, long daysBetween) {
             BigDecimal cancellationFee;
 
             if (daysBetween >= 60) {

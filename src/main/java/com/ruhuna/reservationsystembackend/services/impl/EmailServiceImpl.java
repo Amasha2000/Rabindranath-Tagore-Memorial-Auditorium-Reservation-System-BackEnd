@@ -28,7 +28,7 @@ public class EmailServiceImpl implements EmailService {
         message.setText("Dear " + applicantName + ",\n\n" +
                 "Your reservation's approval status has been updated to: " + status + ".\n" +
                 "Please log in to view more details: " +
-                "http://localhost:3000/user-login" + "\n\n" +  // Replace with actual login page URL
+                "http://localhost:3000/user-login" + "\n\n" +
                 "Thank you for using our service.\n\n" +
                 "Best regards,\nUniversity of Ruhuna Auditorium Management");
 
@@ -43,8 +43,38 @@ public class EmailServiceImpl implements EmailService {
         message.setText("Dear applicant,\n\n" +
                 "Your payment of Rs." + amount + " for " + paymentType + " has been successfully processed.\n" +
                 "Please log in to view more details: " +
-                "http://localhost:3000/user-login" + "\n\n" +  // Replace with actual login page URL
+                "http://localhost:3000/user-login" + "\n\n" +
                 "Thank you for using our service.\n\n" +
+                "Best regards,\nUniversity of Ruhuna Auditorium Management");
+
+        mailSender.send(message);
+    }
+
+    @Override
+    public void receiveToVCEmail(String toEmail) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject("Pending Reservation Approval");
+        message.setText("Dear sir,\n\n" +
+                "New Reservation is waiting for your approval\n" +
+                "Please log in to view more details: " +
+                "http://localhost:3000/vc-login" + "\n\n" +
+                "Thank you.\n\n" +
+                "Best regards,\nUniversity of Ruhuna Auditorium Management");
+
+        mailSender.send(message);
+    }
+
+    @Override
+    public void newApplicationFormEmail(String toEmail) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject("View new Submission Form");
+        message.setText("Dear sir,\n\n" +
+                "New Application Form has submitted to reserve the auditorium.\n" +
+                "Please log in to view more details: " +
+                "http://localhost:3000/admin-login" + "\n\n" +
+                "Thank you.\n\n" +
                 "Best regards,\nUniversity of Ruhuna Auditorium Management");
 
         mailSender.send(message);
