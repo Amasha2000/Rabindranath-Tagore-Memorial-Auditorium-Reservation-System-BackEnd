@@ -49,4 +49,13 @@ public class VCServiceImpl implements  VCService {
             throw e;
         }
     }
+
+    @Override
+    public VC findByVCUsername(String username) {
+        try {
+            return vcRepository.findByUsername(username);
+        }catch (Exception e){
+            throw e;
+        }
+    }
 }

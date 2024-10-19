@@ -65,4 +65,13 @@ public class AdminServiceImpl implements AdminService {
 
         return new AdminStatDto(totalUsers, totalRevenue, totalCompletedReservations);
     }
+
+    @Override
+    public Admin findByAdminUsername(String username) {
+        try {
+            return adminRepository.findByUsername(username);
+        }catch (Exception e){
+            throw e;
+        }
+    }
 }

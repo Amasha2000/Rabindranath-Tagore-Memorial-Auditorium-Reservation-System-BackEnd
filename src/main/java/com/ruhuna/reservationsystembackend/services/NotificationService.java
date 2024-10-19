@@ -10,7 +10,13 @@ public interface NotificationService {
 
     List<Notification> getAllNotifications(Long userId);
 
+    List<Notification> getAllVCNotifications(Long userId);
+
+    List<Notification> getAllAdminNotifications(Long userId);
+
     void createNotification(String message, Long userId, String redirectUrl);
+
+    void createNotificationWithoutUrl(String message, Long userId);
 
     void createVCNotification(String message, Long vcId, String redirectUrl);
 

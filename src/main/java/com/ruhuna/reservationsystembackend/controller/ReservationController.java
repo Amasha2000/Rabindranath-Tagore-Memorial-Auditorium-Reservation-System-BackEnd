@@ -103,10 +103,10 @@ public class ReservationController {
     }
 
     //update approval status
-    @PutMapping("/approve/{id}")
-    public ResponseEntity<?> updateReservationStatus(@PathVariable Long id){
+    @PutMapping("/{id}/{status}")
+    public ResponseEntity<?> updateReservationStatus(@PathVariable Long id,@PathVariable ApprovalStatus status){
         try {
-            reservationService.updateStatus(id);
+            reservationService.updateStatus(id,status);
             return ResponseEntity.ok(new CommonResponse<>(true, "Approval Status has changed successfully"));
         }catch (RuntimeException exception){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());

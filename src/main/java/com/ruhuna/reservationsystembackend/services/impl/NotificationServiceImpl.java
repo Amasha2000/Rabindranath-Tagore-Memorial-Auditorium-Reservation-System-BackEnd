@@ -1,7 +1,9 @@
 package com.ruhuna.reservationsystembackend.services.impl;
 
+import com.ruhuna.reservationsystembackend.entity.Admin;
 import com.ruhuna.reservationsystembackend.entity.GuestUser;
 import com.ruhuna.reservationsystembackend.entity.Notification;
+import com.ruhuna.reservationsystembackend.entity.VC;
 import com.ruhuna.reservationsystembackend.repository.AdminRepository;
 import com.ruhuna.reservationsystembackend.repository.GuestUserRepository;
 import com.ruhuna.reservationsystembackend.repository.NotificationRepository;
@@ -37,6 +39,18 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    public List<Notification> getAllVCNotifications(Long userId) {
+        Optional<VC> user = vcRepository.findById(userId);
+        return notificationRepository.findByVc(user);
+    }
+
+    @Override
+    public List<Notification> getAllAdminNotifications(Long userId) {
+        Optional<Admin> user = adminRepository.findById(userId);
+        return notificationRepository.findByAdmin(user);
+    }
+
+    @Override
     public void createNotification(String message, Long userId, String redirectUrl) {
         Notification notification = Notification.builder()
                 .message(message)
@@ -44,6 +58,17 @@ public class NotificationServiceImpl implements NotificationService {
                 .date(LocalDate.now())
                 .hasRead(false)
                 .redirectUrl(redirectUrl)
+                .build();
+        notificationRepository.save(notification);
+    }
+
+    @Override
+    public void createNotificationWithoutUrl(String message, Long userId) {
+        Notification notification = Notification.builder()
+                .message(message)
+                .user(guestUserRepository.findById(userId).orElseThrow())
+                .date(LocalDate.now())
+                .hasRead(false)
                 .build();
         notificationRepository.save(notification);
     }

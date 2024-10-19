@@ -36,7 +36,6 @@ public class ReservationServiceImpl implements ReservationService {
     private final AdminRepository adminRepository;
     private final ModelMapper modelMapper;
     private final EmailService emailService;
-
     private final NotificationService notificationService;
 
     //get all reservations
@@ -177,10 +176,10 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public void updateStatus(Long reservationId) {
+    public void updateStatus(Long reservationId,ApprovalStatus status) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(()-> new IllegalArgumentException("Reservation not found"));
 
-        reservation.setApprovalStatus(ApprovalStatus.APPROVED);
+        reservation.setApprovalStatus(status);
         reservationRepository.save(reservation);
 
         //send email
@@ -188,10 +187,14 @@ public class ReservationServiceImpl implements ReservationService {
 
         //send notifications
         String redirectUrl = "/payment/";
-        notificationService.createNotification("Your reservation has approved and make the advance fee to confirm the reservation",
-                reservationId,
-                redirectUrl);
-
+        if(status == ApprovalStatus.APPROVED) {
+            notificationService.createNotification("Your reservation has approved and make the advance fee to confirm the reservation",
+                    reservationId,
+                    redirectUrl);
+        }else{
+            notificationService.createNotificationWithoutUrl("Your reservation has rejected.If you have any doubts feel free to ask from the auditorium administration",
+                    reservationId);
+        }
     }
 
     @Override

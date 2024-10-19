@@ -11,7 +11,7 @@ public interface ReservationService {
     List<UnavailableDatesDto> getUnavailableDates();
     List<Reservation> getAllReservations();
     void submitForm(ReservationDto reservationDto);
-    void updateStatus(Long reservationId);
+    void updateStatus(Long reservationId,ApprovalStatus status);
     List<Reservation> getReservationsByUsername(String username);
     void cancelReservation(Long reservationId);
     List<Reservation> findAllByStatus(ApprovalStatus status);
