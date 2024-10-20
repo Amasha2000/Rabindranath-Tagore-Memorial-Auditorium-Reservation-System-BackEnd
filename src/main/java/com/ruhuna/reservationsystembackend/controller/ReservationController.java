@@ -5,10 +5,8 @@ import com.ruhuna.reservationsystembackend.dto.UnavailableDatesDto;
 import com.ruhuna.reservationsystembackend.dto.common.CommonResponse;
 import com.ruhuna.reservationsystembackend.entity.Reservation;
 import com.ruhuna.reservationsystembackend.enums.ApprovalStatus;
-import com.ruhuna.reservationsystembackend.services.GuestUserService;
 import com.ruhuna.reservationsystembackend.services.ReservationService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -119,5 +117,22 @@ public class ReservationController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/get/by-status-eventType")
+    public ResponseEntity<List<Reservation>> getReservationsByStatusAndEventType(
+            @RequestParam List<ApprovalStatus> status,
+            @RequestParam(required = false) String eventType) {
+        try {
+            List<Reservation> reservations = reservationService.getReservationsByStatusAndEventType(status, eventType);
+            return ResponseEntity.ok(reservations);
+        }catch(RuntimeException e){
+            throw e;
+        }
+    }
 
+    @PutMapping("/complete/{reservationId}")
+    public ResponseEntity<Void> completeReservation(@PathVariable Long reservationId) {
+        reservationService.completeReservation(reservationId);
+        return ResponseEntity.ok().build();
+    }
 }
+

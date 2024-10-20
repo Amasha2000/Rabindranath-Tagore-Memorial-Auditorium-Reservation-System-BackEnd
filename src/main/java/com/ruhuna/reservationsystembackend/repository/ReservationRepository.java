@@ -24,4 +24,6 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
     Reservation findByReservationId(Long id);
     List<Reservation> findByApprovalStatusAndHasSendToVCIsFalse(ApprovalStatus status);
     List<Reservation> findByApprovalStatusAndHasSendToVCIsTrue(ApprovalStatus status);
+    List<Reservation> findByApprovalStatusInAndHasCompletedFalse(List<ApprovalStatus> status);
+    List<Reservation> findByApprovalStatusInAndEventTypeAndHasCompletedFalse(List<ApprovalStatus> status, String eventType);
 }

@@ -299,4 +299,20 @@ public class ReservationServiceImpl implements ReservationService {
             return cancellationFee.setScale(2, RoundingMode.HALF_UP);
         }
 
+    public List<Reservation> getReservationsByStatusAndEventType(List<ApprovalStatus> status, String eventType) {
+        if (eventType == null || eventType.isEmpty()) {
+            return reservationRepository.findByApprovalStatusInAndHasCompletedFalse(status);
+        } else {
+            return reservationRepository.findByApprovalStatusInAndEventTypeAndHasCompletedFalse(status, eventType);
+        }
+    }
+
+    @Override
+    public void completeReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(()-> new IllegalArgumentException("Reservation not found"));
+
+        reservation.setHasCompleted(true);
+        reservationRepository.save(reservation);
+    }
+
 }

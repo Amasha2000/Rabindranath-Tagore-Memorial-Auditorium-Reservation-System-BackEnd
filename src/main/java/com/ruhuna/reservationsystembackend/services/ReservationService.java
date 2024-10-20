@@ -20,4 +20,6 @@ public interface ReservationService {
     void sendToVc(Long id);
     List<Reservation> findAllByStatusToAdmin(ApprovalStatus status);
     List<Reservation> findAllByStatusToVC(ApprovalStatus status);
+    List<Reservation> getReservationsByStatusAndEventType(List<ApprovalStatus> status, String eventType);
+    void completeReservation(Long reservationId);
 }

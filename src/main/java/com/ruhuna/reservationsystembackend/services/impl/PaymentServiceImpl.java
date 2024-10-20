@@ -104,4 +104,12 @@ public class PaymentServiceImpl implements PaymentService {
 
         return paymentRepository.existsPaymentByReservationAndPaymentType(reservation,PaymentType.TOTAL_FEE);
     }
+
+    @Override
+    public Payment getPaymentDetailsById(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(()->new RuntimeException("Reservation not found"));
+
+        return paymentRepository.findByReservation(reservation);
+    }
 }

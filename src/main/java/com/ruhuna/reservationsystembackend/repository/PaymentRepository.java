@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     boolean existsPaymentByReservationAndPaymentType(Reservation reservation, PaymentType paymentType);
+    Payment findByReservation(Reservation reservation);
 }

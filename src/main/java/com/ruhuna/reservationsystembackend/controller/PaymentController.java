@@ -1,11 +1,15 @@
 package com.ruhuna.reservationsystembackend.controller;
 
 import com.ruhuna.reservationsystembackend.dto.PaymentDto;
+import com.ruhuna.reservationsystembackend.entity.Payment;
+import com.ruhuna.reservationsystembackend.entity.Reservation;
 import com.ruhuna.reservationsystembackend.services.PaymentService;
 import com.stripe.exception.StripeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/payment")
@@ -38,5 +42,11 @@ public class PaymentController {
     public ResponseEntity<Boolean> isTotalPaid(@PathVariable Long reservationId){
         boolean totalPaid = paymentService.isTotalPaid(reservationId);
         return ResponseEntity.ok(totalPaid);
+    }
+
+    @GetMapping("/get/{reservationId}")
+    public ResponseEntity<Payment> getPaymentDetailsById(@PathVariable Long reservationId) {
+        Payment payment = paymentService.getPaymentDetailsById(reservationId);
+        return ResponseEntity.ok(payment);
     }
 }
