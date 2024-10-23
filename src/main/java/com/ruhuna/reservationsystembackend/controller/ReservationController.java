@@ -71,7 +71,7 @@ public class ReservationController {
         return ResponseEntity.ok(reservations);
     }
 
-    //get all reservations for sending vc
+    //get all by id
     @GetMapping("/get/{id}")
     public ResponseEntity<Reservation> getReservationById(@PathVariable Long id) {
         Reservation reservation = reservationService.findReservationById(id);
@@ -133,6 +133,16 @@ public class ReservationController {
     public ResponseEntity<Void> completeReservation(@PathVariable Long reservationId) {
         reservationService.completeReservation(reservationId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/get/complete")
+    public ResponseEntity<List<Reservation>> getCompletedReservations() {
+        try {
+            List<Reservation> reservations = reservationService.getAllCompletedReservations();
+            return ResponseEntity.ok(reservations);
+        }catch(RuntimeException e){
+            throw e;
+        }
     }
 }
 

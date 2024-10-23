@@ -315,4 +315,9 @@ public class ReservationServiceImpl implements ReservationService {
         reservationRepository.save(reservation);
     }
 
+    @Override
+    public List<Reservation> getAllCompletedReservations() {
+        return reservationRepository.findByHasCompletedTrue();
+    }
+
 }

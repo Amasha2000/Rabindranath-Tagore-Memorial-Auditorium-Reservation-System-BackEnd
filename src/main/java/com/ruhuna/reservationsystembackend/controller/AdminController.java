@@ -2,10 +2,8 @@ package com.ruhuna.reservationsystembackend.controller;
 
 import com.ruhuna.reservationsystembackend.dto.AdminDto;
 import com.ruhuna.reservationsystembackend.dto.AdminStatDto;
-import com.ruhuna.reservationsystembackend.dto.VCDto;
 import com.ruhuna.reservationsystembackend.dto.common.CommonResponse;
 import com.ruhuna.reservationsystembackend.services.AdminService;
-import com.ruhuna.reservationsystembackend.services.VCService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

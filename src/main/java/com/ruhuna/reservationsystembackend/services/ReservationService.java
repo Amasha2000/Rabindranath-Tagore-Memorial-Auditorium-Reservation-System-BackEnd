@@ -22,4 +22,5 @@ public interface ReservationService {
     List<Reservation> findAllByStatusToVC(ApprovalStatus status);
     List<Reservation> getReservationsByStatusAndEventType(List<ApprovalStatus> status, String eventType);
     void completeReservation(Long reservationId);
+    List<Reservation> getAllCompletedReservations();
 }
