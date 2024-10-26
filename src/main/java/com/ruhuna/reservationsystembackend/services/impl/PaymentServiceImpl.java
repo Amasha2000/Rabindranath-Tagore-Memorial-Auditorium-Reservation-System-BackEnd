@@ -70,12 +70,12 @@ public class PaymentServiceImpl implements PaymentService {
         if(paymentDto.getPaymentType() == PaymentType.ADVANCE_FEE){
             String redirectUrl = "/payment/";
             notificationService.createNotification("Your payment of Rs."+paymentDto.getAmount()+" for advance fee was successful and make the total payment for reserve the auditorium.",
-                    reservationId,
+                    reservation.getUser().getUserId(),
                     redirectUrl);
         }else {
             String redirectUrl = "/payment/";
             notificationService.createNotification("Your payment of Rs." + paymentDto.getAmount() + " for total fee was successful and reservation has completed.",
-                    reservationId,
+                    reservation.getUser().getUserId(),
                     redirectUrl);
         }
 

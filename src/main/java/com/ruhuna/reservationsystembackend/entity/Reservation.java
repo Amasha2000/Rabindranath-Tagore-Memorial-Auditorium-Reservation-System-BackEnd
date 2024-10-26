@@ -105,5 +105,6 @@ public class Reservation {
     @JsonIgnore
     private VC vc;
     @OneToMany(mappedBy = "reservation")
+    @JsonIgnore
     private List<Payment> paymentList;
 }

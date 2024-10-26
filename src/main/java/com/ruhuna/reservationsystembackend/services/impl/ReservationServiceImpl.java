@@ -42,7 +42,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<UnavailableDatesDto> getUnavailableDates() {
         try {
-            List<Reservation> reservations = reservationRepository.findAll();
+            List<Reservation> reservations = reservationRepository.findByApprovalStatus(ApprovalStatus.APPROVED);
             return reservations.stream()
                     .map(reservation -> new UnavailableDatesDto(
                             reservation.getReservedDate(),
@@ -187,13 +187,13 @@ public class ReservationServiceImpl implements ReservationService {
 
         //send notifications
         String redirectUrl = "/payment/";
-        if(status == ApprovalStatus.APPROVED) {
+        if(status.equals(ApprovalStatus.APPROVED)) {
             notificationService.createNotification("Your reservation has approved and make the advance fee to confirm the reservation",
-                    reservationId,
+                    reservation.getUser().getUserId(),
                     redirectUrl);
         }else{
             notificationService.createNotificationWithoutUrl("Your reservation has rejected.If you have any doubts feel free to ask from the auditorium administration",
-                    reservationId);
+                    reservation.getUser().getUserId());
         }
     }
 
