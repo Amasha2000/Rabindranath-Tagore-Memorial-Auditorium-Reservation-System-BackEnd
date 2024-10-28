@@ -3,11 +3,9 @@ package com.ruhuna.reservationsystembackend.services.impl;
 import com.ruhuna.reservationsystembackend.dto.AdminDto;
 import com.ruhuna.reservationsystembackend.dto.AdminStatDto;
 import com.ruhuna.reservationsystembackend.entity.Admin;
+import com.ruhuna.reservationsystembackend.entity.PasswordResetTokenAdmin;
 import com.ruhuna.reservationsystembackend.enums.UserRole;
-import com.ruhuna.reservationsystembackend.repository.AdminRepository;
-import com.ruhuna.reservationsystembackend.repository.GuestUserRepository;
-import com.ruhuna.reservationsystembackend.repository.ReservationRepository;
-import com.ruhuna.reservationsystembackend.repository.VCRepository;
+import com.ruhuna.reservationsystembackend.repository.*;
 import com.ruhuna.reservationsystembackend.services.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,6 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -22,13 +23,13 @@ import java.math.BigDecimal;
 public class AdminServiceImpl implements AdminService {
 
     private final VCRepository vcRepository;
-
     private final AdminRepository adminRepository;
-
     private final GuestUserRepository guestUserRepository;
     private final ReservationRepository reservationRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+
+    private final PasswordResetTokenAdminRepository passwordResetTokenAdminRepository;
 
 
     @Override
@@ -73,5 +74,32 @@ public class AdminServiceImpl implements AdminService {
         }catch (Exception e){
             throw e;
         }
+    }
+
+    @Override
+    public String generateResetToken(String email) throws Exception {
+        Optional<Admin> admin = adminRepository.findByEmail(email);
+        if (!admin.isPresent()) {
+            throw new Exception("Email not found");
+        }
+
+        Admin adminUser = admin.get();
+        String token = UUID.randomUUID().toString();
+        PasswordResetTokenAdmin passwordResetToken = new PasswordResetTokenAdmin(token, adminUser);
+        passwordResetTokenAdminRepository.save(passwordResetToken);
+
+        return token;
+    }
+
+   @Override
+    public void resetPassword(String token, String newPassword) throws Exception {
+        Optional<PasswordResetTokenAdmin> tokenOpt = passwordResetTokenAdminRepository.findByToken(token);
+        if (!tokenOpt.isPresent() || tokenOpt.get().getExpirationDate().isBefore(LocalDateTime.now())) {
+            throw new Exception("Invalid or expired token");
+        }
+
+        Admin adminUser = tokenOpt.get().getAdmin();
+        adminUser.setPassword(passwordEncoder.encode(newPassword));
+        adminRepository.save(adminUser);
     }
 }

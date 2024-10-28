@@ -1,12 +1,11 @@
 package com.ruhuna.reservationsystembackend.services.impl;
 
 import com.ruhuna.reservationsystembackend.dto.GuestUserDto;
-import com.ruhuna.reservationsystembackend.entity.Admin;
-import com.ruhuna.reservationsystembackend.entity.GuestUser;
-import com.ruhuna.reservationsystembackend.entity.VC;
+import com.ruhuna.reservationsystembackend.entity.*;
 import com.ruhuna.reservationsystembackend.enums.UserRole;
 import com.ruhuna.reservationsystembackend.repository.AdminRepository;
 import com.ruhuna.reservationsystembackend.repository.GuestUserRepository;
+import com.ruhuna.reservationsystembackend.repository.PasswordResetTokenUserRepository;
 import com.ruhuna.reservationsystembackend.repository.VCRepository;
 import com.ruhuna.reservationsystembackend.services.GuestUserService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,10 @@ import org.springframework.stereotype.Service;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -28,6 +30,7 @@ public class GuestUserServiceImpl implements GuestUserService, UserDetailsServic
     private final GuestUserRepository guestUserRepository;
     private final VCRepository vcRepository;
     private final AdminRepository adminRepository;
+    private final PasswordResetTokenUserRepository passwordResetTokenUserRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -71,6 +74,33 @@ public class GuestUserServiceImpl implements GuestUserService, UserDetailsServic
         }catch (Exception e){
             throw e;
         }
+    }
+
+    @Override
+    public String generateResetToken(String email) throws Exception {
+        Optional<GuestUser> user = guestUserRepository.findByEmail(email);
+        if (!user.isPresent()) {
+            throw new Exception("Email not found");
+        }
+
+        GuestUser guestUser = user.get();
+        String token = UUID.randomUUID().toString();
+        PasswordResetTokenUser passwordResetToken = new PasswordResetTokenUser(token, guestUser);
+        passwordResetTokenUserRepository.save(passwordResetToken);
+
+        return token;
+    }
+
+    @Override
+    public void resetPassword(String token, String newPassword) throws Exception {
+        Optional<PasswordResetTokenUser> tokenOpt = passwordResetTokenUserRepository.findByToken(token);
+        if (!tokenOpt.isPresent() || tokenOpt.get().getExpirationDate().isBefore(LocalDateTime.now())) {
+            throw new Exception("Invalid or expired token");
+        }
+
+        GuestUser guestUser = tokenOpt.get().getUser();
+        guestUser.setPassword(passwordEncoder.encode(newPassword));
+        guestUserRepository.save(guestUser);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.ruhuna.reservationsystembackend.services;
 
-import com.ruhuna.reservationsystembackend.dto.ReservationDto;
-import com.ruhuna.reservationsystembackend.dto.UnavailableDatesDto;
+import com.ruhuna.reservationsystembackend.dto.*;
 import com.ruhuna.reservationsystembackend.entity.Reservation;
 import com.ruhuna.reservationsystembackend.enums.ApprovalStatus;
 

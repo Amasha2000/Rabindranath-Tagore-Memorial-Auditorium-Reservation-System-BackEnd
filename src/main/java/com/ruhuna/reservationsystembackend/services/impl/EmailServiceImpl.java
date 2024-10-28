@@ -79,4 +79,13 @@ public class EmailServiceImpl implements EmailService {
 
         mailSender.send(message);
     }
+
+   @Override
+    public void sendResetPasswordEmail(String email, String resetUrl) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Reset Password");
+        message.setText("To reset your password, click the link below:\n" + resetUrl);
+        mailSender.send(message);
+    }
 }

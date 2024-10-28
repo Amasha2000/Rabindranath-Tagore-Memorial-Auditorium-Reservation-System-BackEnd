@@ -11,4 +11,5 @@ public interface EmailService {
      void sendPaymentConfirmationEmail(String to, PaymentType paymentType, BigDecimal amount);
      void receiveToVCEmail(String toEmail);
      void newApplicationFormEmail(String toEmail);
+     void sendResetPasswordEmail(String email, String resetUrl);
 }

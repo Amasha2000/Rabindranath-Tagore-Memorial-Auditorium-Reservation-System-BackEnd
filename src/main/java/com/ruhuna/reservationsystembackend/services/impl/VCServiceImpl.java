@@ -1,16 +1,21 @@
 package com.ruhuna.reservationsystembackend.services.impl;
 
 import com.ruhuna.reservationsystembackend.dto.VCDto;
-import com.ruhuna.reservationsystembackend.entity.VC;
+import com.ruhuna.reservationsystembackend.entity.*;
 import com.ruhuna.reservationsystembackend.enums.UserRole;
 import com.ruhuna.reservationsystembackend.repository.AdminRepository;
 import com.ruhuna.reservationsystembackend.repository.GuestUserRepository;
+import com.ruhuna.reservationsystembackend.repository.PasswordResetTokenVCRepository;
 import com.ruhuna.reservationsystembackend.repository.VCRepository;
 import com.ruhuna.reservationsystembackend.services.VCService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -20,6 +25,8 @@ public class VCServiceImpl implements  VCService {
     private final VCRepository vcRepository;
     private final AdminRepository adminRepository;
     private final GuestUserRepository guestUserRepository;
+
+    private final PasswordResetTokenVCRepository passwordResetTokenVCRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -57,5 +64,32 @@ public class VCServiceImpl implements  VCService {
         }catch (Exception e){
             throw e;
         }
+    }
+
+    @Override
+    public String generateResetToken(String email) throws Exception {
+        Optional<VC> vc = vcRepository.findByEmail(email);
+        if (!vc.isPresent()) {
+            throw new Exception("Email not found");
+        }
+
+        VC vcUser = vc.get();
+        String token = UUID.randomUUID().toString();
+        PasswordResetTokenVC passwordResetToken = new PasswordResetTokenVC(token, vcUser);
+        passwordResetTokenVCRepository.save(passwordResetToken);
+
+        return token;
+    }
+
+    @Override
+    public void resetPassword(String token, String newPassword) throws Exception {
+        Optional<PasswordResetTokenVC> tokenOpt = passwordResetTokenVCRepository.findByToken(token);
+        if (!tokenOpt.isPresent() || tokenOpt.get().getExpirationDate().isBefore(LocalDateTime.now())) {
+            throw new Exception("Invalid or expired token");
+        }
+
+        VC vc = tokenOpt.get().getVc();
+        vc.setPassword(passwordEncoder.encode(newPassword));
+        vcRepository.save(vc);
     }
 }

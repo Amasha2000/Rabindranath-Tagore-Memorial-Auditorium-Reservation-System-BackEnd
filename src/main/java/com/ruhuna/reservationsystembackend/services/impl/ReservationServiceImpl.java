@@ -1,7 +1,6 @@
 package com.ruhuna.reservationsystembackend.services.impl;
 
-import com.ruhuna.reservationsystembackend.dto.ReservationDto;
-import com.ruhuna.reservationsystembackend.dto.UnavailableDatesDto;
+import com.ruhuna.reservationsystembackend.dto.*;
 import com.ruhuna.reservationsystembackend.entity.Admin;
 import com.ruhuna.reservationsystembackend.entity.GuestUser;
 import com.ruhuna.reservationsystembackend.entity.Reservation;
@@ -319,5 +318,4 @@ public class ReservationServiceImpl implements ReservationService {
     public List<Reservation> getAllCompletedReservations() {
         return reservationRepository.findByHasCompletedTrue();
     }
-
 }
