@@ -3,6 +3,7 @@ package com.ruhuna.reservationsystembackend.services.impl;
 import com.ruhuna.reservationsystembackend.dto.AdminDto;
 import com.ruhuna.reservationsystembackend.dto.AdminStatDto;
 import com.ruhuna.reservationsystembackend.entity.Admin;
+import com.ruhuna.reservationsystembackend.entity.GuestUser;
 import com.ruhuna.reservationsystembackend.entity.PasswordResetTokenAdmin;
 import com.ruhuna.reservationsystembackend.enums.UserRole;
 import com.ruhuna.reservationsystembackend.repository.*;
@@ -101,5 +102,14 @@ public class AdminServiceImpl implements AdminService {
         Admin adminUser = tokenOpt.get().getAdmin();
         adminUser.setPassword(passwordEncoder.encode(newPassword));
         adminRepository.save(adminUser);
+    }
+
+    @Override
+    public Admin updateAdminProfile(String username, Admin updatedUser) {
+        Admin user = findByAdminUsername(username);
+
+        user.setEmail(updatedUser.getEmail());
+
+        return adminRepository.save(user);
     }
 }

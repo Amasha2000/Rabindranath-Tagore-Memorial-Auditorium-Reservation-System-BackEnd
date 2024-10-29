@@ -8,4 +8,5 @@ public interface VCService {
     VC findByVCUsername(String username);
     String generateResetToken(String email) throws Exception;
     void resetPassword(String token, String newPassword) throws Exception;
+    VC updateVCProfile(String username, VC updatedUser);
 }

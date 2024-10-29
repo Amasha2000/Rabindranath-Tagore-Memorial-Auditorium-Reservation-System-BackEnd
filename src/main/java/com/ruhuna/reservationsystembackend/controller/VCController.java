@@ -3,16 +3,14 @@ package com.ruhuna.reservationsystembackend.controller;
 import com.ruhuna.reservationsystembackend.dto.ResetPasswordRequestDto;
 import com.ruhuna.reservationsystembackend.dto.VCDto;
 import com.ruhuna.reservationsystembackend.dto.common.CommonResponse;
+import com.ruhuna.reservationsystembackend.entity.VC;
 import com.ruhuna.reservationsystembackend.services.EmailService;
 import com.ruhuna.reservationsystembackend.services.VCService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -61,5 +59,24 @@ public class VCController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new CommonResponse<>(false, "Invalid or expired token."));
         }
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<VC> getVCProfile(@PathVariable String username) {
+        VC user = vcService.findByVCUsername(username);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/{username}")
+    public ResponseEntity<VC> updateUserProfile(@PathVariable String username, @RequestBody VC updatedUser) {
+        VC user = vcService.findByVCUsername(username);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        vcService.updateVCProfile(username, updatedUser);
+        return ResponseEntity.ok(user);
     }
 }

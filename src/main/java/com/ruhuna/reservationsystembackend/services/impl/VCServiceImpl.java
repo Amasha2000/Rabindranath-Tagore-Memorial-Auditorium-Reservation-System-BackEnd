@@ -92,4 +92,13 @@ public class VCServiceImpl implements  VCService {
         vc.setPassword(passwordEncoder.encode(newPassword));
         vcRepository.save(vc);
     }
+
+    @Override
+    public VC updateVCProfile(String username, VC updatedUser) {
+        VC user = findByVCUsername(username);
+
+        user.setEmail(updatedUser.getEmail());
+
+        return vcRepository.save(user);
+    }
 }

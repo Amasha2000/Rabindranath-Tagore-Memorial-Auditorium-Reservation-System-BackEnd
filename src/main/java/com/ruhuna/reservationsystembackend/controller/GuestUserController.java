@@ -3,18 +3,17 @@ package com.ruhuna.reservationsystembackend.controller;
 import com.ruhuna.reservationsystembackend.dto.GuestUserDto;
 import com.ruhuna.reservationsystembackend.dto.ResetPasswordRequestDto;
 import com.ruhuna.reservationsystembackend.dto.common.CommonResponse;
+import com.ruhuna.reservationsystembackend.entity.GuestUser;
 import com.ruhuna.reservationsystembackend.services.EmailService;
 import com.ruhuna.reservationsystembackend.services.GuestUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.Map;
 
 @RestController
@@ -64,6 +63,24 @@ public class GuestUserController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new CommonResponse<>(false, "Invalid or expired token."));
         }
+    }
+    @GetMapping("/{username}")
+    public ResponseEntity<GuestUser> getUserProfile(@PathVariable String username) {
+        GuestUser user = guestUserService.findByUsername(username);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/{username}")
+    public ResponseEntity<GuestUser> updateUserProfile(@PathVariable String username, @RequestBody GuestUser updatedUser) {
+        GuestUser user = guestUserService.findByUsername(username);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        guestUserService.updateUserProfile(username, updatedUser);
+        return ResponseEntity.ok(user);
     }
 }
 

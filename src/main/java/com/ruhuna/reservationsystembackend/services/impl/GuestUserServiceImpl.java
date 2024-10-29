@@ -139,4 +139,13 @@ public class GuestUserServiceImpl implements GuestUserService, UserDetailsServic
                 throw new UsernameNotFoundException("User not found with username: " + username);
         }
     }
+
+    @Override
+    public GuestUser updateUserProfile(String username, GuestUser updatedUser) {
+        GuestUser user = findByUsername(username);
+
+        user.setEmail(updatedUser.getEmail());
+        user.setMobile(updatedUser.getMobile());
+        return guestUserRepository.save(user);
+    }
 }

@@ -11,4 +11,5 @@ public interface AdminService {
     Admin findByAdminUsername(String username);
     String generateResetToken(String email) throws Exception;
     void resetPassword(String token, String newPassword) throws Exception;
+    Admin updateAdminProfile(String username, Admin updatedUser);
 }

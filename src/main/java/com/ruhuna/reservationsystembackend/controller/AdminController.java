@@ -4,6 +4,7 @@ import com.ruhuna.reservationsystembackend.dto.AdminDto;
 import com.ruhuna.reservationsystembackend.dto.AdminStatDto;
 import com.ruhuna.reservationsystembackend.dto.ResetPasswordRequestDto;
 import com.ruhuna.reservationsystembackend.dto.common.CommonResponse;
+import com.ruhuna.reservationsystembackend.entity.Admin;
 import com.ruhuna.reservationsystembackend.services.AdminService;
 import com.ruhuna.reservationsystembackend.services.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -69,6 +70,25 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new CommonResponse<>(false, "Invalid or expired token."));
         }
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<Admin> getUserProfile(@PathVariable String username) {
+        Admin user = adminService.findByAdminUsername(username);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/{username}")
+    public ResponseEntity<Admin> updateUserProfile(@PathVariable String username, @RequestBody Admin updatedUser) {
+        Admin user = adminService.findByAdminUsername(username);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        adminService.updateAdminProfile(username, updatedUser);
+        return ResponseEntity.ok(user);
     }
 
 }
