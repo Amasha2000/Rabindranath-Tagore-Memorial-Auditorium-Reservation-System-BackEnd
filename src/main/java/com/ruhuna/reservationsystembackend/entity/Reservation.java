@@ -83,6 +83,10 @@ public class Reservation {
     private boolean hasCompleted;
     @Column(nullable = false, columnDefinition = "tinyint(1)")
     private boolean hasSendToVC;
+    @Column(nullable = false, columnDefinition = "tinyint(1)")
+    private boolean cancellationRequested;
+    @Column(nullable = false, columnDefinition = "tinyint(1)")
+    private boolean cancellationApproved;
     @Column(precision = 10, scale = 2)
     private BigDecimal hallReservationFee;
     @Column(precision = 10, scale = 2)

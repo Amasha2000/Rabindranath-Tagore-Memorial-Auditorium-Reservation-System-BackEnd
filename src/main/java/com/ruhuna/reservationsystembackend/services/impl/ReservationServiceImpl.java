@@ -218,6 +218,9 @@ public class ReservationServiceImpl implements ReservationService {
 
             reservation.setHasCancelled(true);
             reservation.setCancellationFee(cancellationFee);
+            reservation.setRefundableFee((reservation.getAdvanceFee().add(reservation.getTotalFee())).subtract(reservation.getCancellationFee()));
+            reservation.setAdvanceFee(BigDecimal.valueOf(0));
+            reservation.setTotalFee(BigDecimal.valueOf(0));
 
             reservationRepository.save(reservation);
         }
@@ -318,4 +321,41 @@ public class ReservationServiceImpl implements ReservationService {
     public List<Reservation> getAllCompletedReservations() {
         return reservationRepository.findByHasCompletedTrue();
     }
+
+    @Override
+    public List<Reservation> getAllCancellationRequestedReservations() {
+        return reservationRepository.findByCancellationRequestedTrue();
+    }
+
+    @Override
+    public void requestCancellation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+
+        reservation.setCancellationRequested(true);
+        reservationRepository.save(reservation);
+
+        // Send email to the admin
+        emailService.sendCancellationRequestEmail("amashagalhenage@gmail.com", reservation);
+    }
+
+    @Override
+    public void approveCancellation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+
+        reservation.setCancellationApproved(true);
+        reservation.setCancellationRequested(false);
+        reservationRepository.save(reservation);
+    }
+
+    @Override
+    public void rejectCancellation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+
+        reservation.setCancellationRequested(false);
+        reservationRepository.save(reservation);
+    }
 }
+

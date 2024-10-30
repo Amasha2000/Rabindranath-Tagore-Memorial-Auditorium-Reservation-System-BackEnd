@@ -1,14 +1,17 @@
 package com.ruhuna.reservationsystembackend.controller;
 
+import com.itextpdf.text.DocumentException;
 import com.ruhuna.reservationsystembackend.dto.PaymentDto;
 import com.ruhuna.reservationsystembackend.entity.Payment;
 import com.ruhuna.reservationsystembackend.entity.Reservation;
 import com.ruhuna.reservationsystembackend.services.PaymentService;
 import com.stripe.exception.StripeException;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @RestController
@@ -27,7 +30,7 @@ public class PaymentController {
         try {
             PaymentDto createdPayment = paymentService.createPayment(reservationId, paymentDto, stripeToken);
             return ResponseEntity.ok(createdPayment);
-        } catch (StripeException e) {
+        } catch (StripeException | DocumentException | MessagingException | FileNotFoundException e) {
             return ResponseEntity.status(500).body(null);
         }
     }

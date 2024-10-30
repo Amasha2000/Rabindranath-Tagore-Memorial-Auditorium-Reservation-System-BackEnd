@@ -22,4 +22,8 @@ public interface ReservationService {
     List<Reservation> getReservationsByStatusAndEventType(List<ApprovalStatus> status, String eventType);
     void completeReservation(Long reservationId);
     List<Reservation> getAllCompletedReservations();
+    void requestCancellation(Long reservationId);
+    void approveCancellation(Long reservationId);
+    void rejectCancellation(Long reservationId);
+    List<Reservation> getAllCancellationRequestedReservations();
 }

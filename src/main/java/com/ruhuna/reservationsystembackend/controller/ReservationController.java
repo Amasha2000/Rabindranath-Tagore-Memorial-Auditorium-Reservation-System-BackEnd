@@ -143,5 +143,33 @@ public class ReservationController {
             throw e;
         }
     }
+
+    @GetMapping("/get/cancellation-requested")
+    public ResponseEntity<List<Reservation>> getCancellationRequestedReservations() {
+        try {
+            List<Reservation> reservations = reservationService.getAllCancellationRequestedReservations();
+            return ResponseEntity.ok(reservations);
+        }catch(RuntimeException e){
+            throw e;
+        }
+    }
+
+    @PostMapping("/request-cancellation/{reservationId}")
+    public ResponseEntity<String> requestCancellation(@PathVariable Long reservationId) {
+        reservationService.requestCancellation(reservationId);
+        return ResponseEntity.ok("Cancellation request sent to admin.");
+    }
+
+    @PutMapping("/approve-cancellation/{reservationId}")
+    public ResponseEntity<String> approveCancellation(@PathVariable Long reservationId) {
+        reservationService.approveCancellation(reservationId);
+        return ResponseEntity.ok("Reservation cancelled successfully.");
+    }
+
+    @PutMapping("/reject-cancellation/{reservationId}")
+    public ResponseEntity<String> rejectCancellation(@PathVariable Long reservationId) {
+        reservationService.rejectCancellation(reservationId);
+        return ResponseEntity.ok("Cancellation request rejected.");
+    }
 }
 
