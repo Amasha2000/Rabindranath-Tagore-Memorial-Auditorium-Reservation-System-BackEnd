@@ -44,6 +44,38 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    public void sendApprovalStatusEmailToAdmin(String toEmail, Reservation reservation, ApprovalStatus status) {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setTo(toEmail);
+        message.setSubject("Auditorium Reservation Approval Status Updated for Reservation ID:"+reservation.getReservationId());
+        message.setText("Dear Sir,\n\n" +
+                "Reservation's approval status has been updated to: " + status + ".\n" +
+                "Please log in to view more details: " +
+                "http://localhost:3001/login" + "\n\n" +
+                "Thank you for using our service.\n\n" +
+                "Best regards,\nUniversity of Ruhuna Auditorium Management");
+
+        mailSender.send(message);
+    }
+
+    @Override
+    public void sendSignUpEmail(String toEmail) {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setTo(toEmail);
+        message.setSubject("Sign Up Confirmation");
+        message.setText("Dear user,\n\n" +
+                "Your have successfully registered to the auditorium reservation system.\n" +
+                "Click here to login: " +
+                "http://localhost:3000/login" + "\n\n" +
+                "Thank you for using our service.\n\n" +
+                "Best regards,\nUniversity of Ruhuna Auditorium Management");
+
+        mailSender.send(message);
+    }
+
+    @Override
     public void sendPaymentReceiptEmail(String to, PaymentType paymentType, BigDecimal amount, byte[] receiptData) throws MessagingException, FileNotFoundException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -67,20 +99,37 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-//    @Override
-//    public void sendPaymentConfirmationEmail(String to, PaymentType paymentType, BigDecimal amount) {
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo(to);
-//        message.setSubject("Payment Confirmation for Reservation " + paymentType);
-//        message.setText("Dear applicant,\n\n" +
-//                "Your payment of Rs." + amount + " for " + paymentType + " has been successfully processed.\n" +
-//                "Please log in to view more details: " +
-//                "http://localhost:3000/login" + "\n\n" +
-//                "Thank you for using our service.\n\n" +
-//                "Best regards,\nUniversity of Ruhuna Auditorium Management");
-//
-//        mailSender.send(message);
-//    }
+    @Override
+    public void sendCancelConfirmationEmail(String to, Reservation reservation) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("Confirmation for Cancel Reservation");
+        message.setText("Dear applicant,\n\n" +
+                "Your reservation has successfully cancelled.\n\n" +
+                "Cancellation Fee : Rs." + reservation.getCancellationFee() + "\n" +
+                "Total Refundable Fee : Rs." + reservation.getRefundableFee() + "\n\n" +
+                "Thank you for using our service.\n\n" +
+                "Best regards,\nUniversity of Ruhuna Auditorium Management");
+
+        mailSender.send(message);
+    }
+
+    @Override
+    public void sendCancelConfirmationEmailToAdmin(String to, Reservation reservation) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("Confirmation for Cancel Reservation");
+        message.setText("Dear sir,\n\n" +
+                "Reservation has successfully cancelled for Reservation ID:"+reservation.getReservationId()+".\n\n" +
+                "Cancellation Fee : Rs." + reservation.getCancellationFee() + "\n" +
+                "Total Refundable Fee : Rs." + reservation.getRefundableFee() + "\n\n" +
+                "Please log in to view more details: " +
+                "http://localhost:3001/login" + "\n\n" +
+                "Thank you for using our service.\n\n" +
+                "Best regards,\nUniversity of Ruhuna Auditorium Management");
+
+        mailSender.send(message);
+    }
 
     @Override
     public void receiveToVCEmail(String toEmail) {

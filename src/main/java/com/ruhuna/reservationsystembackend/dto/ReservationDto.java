@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -48,4 +49,8 @@ public class ReservationDto {
     private String ticketSalesAtPremises;
     private String security;
     private String username;
+
+    public void setViewers(List<String> viewers) {
+        this.viewers = String.join(",", viewers);
+    }
 }

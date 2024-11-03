@@ -7,6 +7,7 @@ import com.ruhuna.reservationsystembackend.repository.AdminRepository;
 import com.ruhuna.reservationsystembackend.repository.GuestUserRepository;
 import com.ruhuna.reservationsystembackend.repository.PasswordResetTokenUserRepository;
 import com.ruhuna.reservationsystembackend.repository.VCRepository;
+import com.ruhuna.reservationsystembackend.services.EmailService;
 import com.ruhuna.reservationsystembackend.services.GuestUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,6 +34,7 @@ public class GuestUserServiceImpl implements GuestUserService, UserDetailsServic
     private final PasswordResetTokenUserRepository passwordResetTokenUserRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
 
     @Override
@@ -62,6 +64,9 @@ public class GuestUserServiceImpl implements GuestUserService, UserDetailsServic
             guestUser.setUserRole(UserRole.ROLE_GUEST_USER);
 
             guestUserRepository.save(guestUser);
+
+            emailService.sendSignUpEmail(guestUser.getEmail());
+
         }catch (Exception e){
             throw e;
         }

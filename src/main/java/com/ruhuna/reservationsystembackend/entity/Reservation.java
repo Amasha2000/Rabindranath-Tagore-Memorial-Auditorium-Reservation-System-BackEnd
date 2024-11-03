@@ -111,4 +111,8 @@ public class Reservation {
     @OneToMany(mappedBy = "reservation")
     @JsonIgnore
     private List<Payment> paymentList;
+
+    public void setViewers(List<String> viewers) {
+        this.viewers = String.join(",", viewers);
+    }
 }

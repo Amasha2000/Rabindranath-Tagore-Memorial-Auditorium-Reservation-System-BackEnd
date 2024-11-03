@@ -51,7 +51,7 @@ public class AdminServiceImpl implements AdminService {
                 admin.setPassword(passwordEncoder.encode(adminDto.getPassword()));
             if (adminDto.getEmail() != null && !adminDto.getEmail().isEmpty())
                 admin.setEmail(adminDto.getEmail());
-            admin.setUserRole(UserRole.ROLE_VC);
+            admin.setUserRole(UserRole.ROLE_ADMIN);
 
             adminRepository.save(admin);
         }catch (Exception e){

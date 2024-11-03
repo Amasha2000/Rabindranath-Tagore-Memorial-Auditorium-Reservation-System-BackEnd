@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.time.temporal.ChronoUnit;
@@ -89,7 +90,7 @@ public class ReservationServiceImpl implements ReservationService {
             if(reservationDto.getEventType() != null && !reservationDto.getEventType().isEmpty())
                 reservation.setEventType(reservationDto.getEventType());
             if(reservationDto.getViewers() != null && !reservationDto.getViewers().isEmpty())
-                reservation.setViewers(reservationDto.getViewers());
+                reservation.setViewers(Collections.singletonList(reservationDto.getViewers()));
             if(reservationDto.getReservedDate() != null)
                 reservation.setReservedDate(reservationDto.getReservedDate());
             if(reservationDto.getEventStartTime() != null)
@@ -184,15 +185,27 @@ public class ReservationServiceImpl implements ReservationService {
         //send email
         emailService.sendApprovalStatusEmail(reservation.getEmail(), reservation.getApplicantName(), reservation.getApprovalStatus());
 
+        Admin admin = adminRepository.findByUserRole(UserRole.ROLE_ADMIN);
+        emailService.sendApprovalStatusEmailToAdmin(admin.getEmail(), reservation, reservation.getApprovalStatus());
+
         //send notifications
         String redirectUrl = "/payment/";
+        String redirectUrlAdmin = "/manage-reservations/";
         if(status.equals(ApprovalStatus.APPROVED)) {
             notificationService.createNotification("Your reservation has approved and make the advance fee to confirm the reservation",
                     reservation.getUser().getUserId(),
                     redirectUrl);
+
+            notificationService.createAdminNotification("Reservation has approved for Reservation ID:"+reservation.getReservationId(),
+                    admin.getAdminId(),
+                    redirectUrlAdmin);
         }else{
             notificationService.createNotificationWithoutUrl("Your reservation has rejected.If you have any doubts feel free to ask from the auditorium administration",
                     reservation.getUser().getUserId());
+
+            notificationService.createAdminNotification("Reservation has rejected for Reservation ID:"+reservation.getReservationId(),
+                    admin.getAdminId(),
+                    redirectUrlAdmin);
         }
     }
 
@@ -223,7 +236,19 @@ public class ReservationServiceImpl implements ReservationService {
             reservation.setTotalFee(BigDecimal.valueOf(0));
 
             reservationRepository.save(reservation);
-        }
+
+            //send email
+            emailService.sendCancelConfirmationEmail(reservation.getEmail(), reservation);
+
+            Admin admin = adminRepository.findByUserRole(UserRole.ROLE_ADMIN);
+            emailService.sendCancelConfirmationEmailToAdmin(admin.getEmail(),reservation);
+
+            String redirectUrl = "/manage-reservations/";
+            notificationService.createAdminNotification("Reservation has cancelled for reservation ID:"+reservation.getReservationId()+".Click here to view",
+                admin.getAdminId(),
+                redirectUrl);
+
+    }
 
     @Override
     public List<Reservation> findAllByStatus(ApprovalStatus status) {
@@ -335,8 +360,10 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setCancellationRequested(true);
         reservationRepository.save(reservation);
 
+        Admin admin = adminRepository.findByUserRole(UserRole.ROLE_ADMIN);
+
         // Send email to the admin
-        emailService.sendCancellationRequestEmail("amashagalhenage@gmail.com", reservation);
+        emailService.sendCancellationRequestEmail(admin.getEmail(), reservation);
     }
 
     @Override

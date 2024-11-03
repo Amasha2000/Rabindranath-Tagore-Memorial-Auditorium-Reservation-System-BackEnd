@@ -79,6 +79,8 @@ public class PaymentServiceImpl implements PaymentService {
         Admin admin = adminRepository.findByUserRole(UserRole.ROLE_ADMIN);
         emailService.sendPaymentReceiptEmail(admin.getEmail(), payment.getPaymentType() , paymentDto.getAmount(), receiptData);
 
+        emailService.sendPaymentReceiptEmail("amasham478@gmail.com", payment.getPaymentType() , paymentDto.getAmount(), receiptData);
+
         String redirectUrlAdmin = "/manage-reservations/";
 
         //send notifications
